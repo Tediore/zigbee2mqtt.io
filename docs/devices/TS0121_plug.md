@@ -17,8 +17,10 @@ description: "Integrate your TuYa TS0121_plug via Zigbee2MQTT with whatever smar
 | White-label | BlitzWolf BW-SHP13 |
 
 ## Notes
+
+
 ### Pairing
-Pair this device with a long press on the on/off button. The button will flash to indicate it's in pairing mode. When the flashing stops it should be paired.
+Pair this device with a long press (5 Seconds) on the on/off button. The button will flash blue to indicate it's in pairing mode. When the blue flashing stops it should be paired and the led will turn solid red. If the led is solid blue, the device is not paired or paring was not successful.
 
 ### Device type specific configuration
 *[How to use device type specific configuration](../information/configuration.md)*
@@ -122,6 +124,9 @@ sensor:
     value_template: "{{ value_json.energy }}"
     unit_of_measurement: "kWh"
     device_class: "energy"
+    state_class: "measurement"
+    last_reset_topic: true
+    last_reset_value_template: "1970-01-01T00:00:00+00:00"
 
 sensor:
   - platform: "mqtt"
