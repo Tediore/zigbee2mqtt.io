@@ -1,27 +1,29 @@
 ---
 title: "eCozy 1TST-EU control via MQTT"
-description: "Integrate your eCozy 1TST-EU via Zigbee2MQTT with whatever smart home
- infrastructure you are using without the vendors bridge or gateway."
+description: "Integrate your eCozy 1TST-EU via Zigbee2MQTT with whatever smart home infrastructure you are using without the vendors bridge or gateway."
+addedAt: 2019-07-22T20:08:17Z
+pageClass: device-page
 ---
 
-*To contribute to this page, edit the following
-[file](https://github.com/Koenkk/zigbee2mqtt.io/blob/master/docs/devices/1TST-EU.md)*
+<!-- !!!! -->
+<!-- ATTENTION: This file is auto-generated through docgen! -->
+<!-- You can only edit the "Notes"-Section between the two comment lines "Notes BEGIN" and "Notes END". -->
+<!-- Do not use h1 or h2 heading within "## Notes"-Section. -->
+<!-- !!!! -->
 
 # eCozy 1TST-EU
 
+|     |     |
+|-----|-----|
 | Model | 1TST-EU  |
 | Vendor  | eCozy  |
 | Description | Smart heating thermostat |
 | Exposes | battery, climate (occupied_heating_setpoint, local_temperature, system_mode, running_state, local_temperature_calibration, pi_heating_demand), linkquality |
-| Picture | ![eCozy 1TST-EU](../images/devices/1TST-EU.jpg) |
+| Picture | ![eCozy 1TST-EU](https://www.zigbee2mqtt.io/images/devices/1TST-EU.jpg) |
 
+
+<!-- Notes BEGIN: You can edit here. Add "## Notes" headline if not already present. -->
 ## Notes
-
-### Device type specific configuration
-*[How to use device type specific configuration](../information/configuration.md)*
-
-* `legacy`: Set to `false` to disable the legacy integration (highly recommended!) (default: true)
-
 
 ### Controlling
 Get local temperature in degrees Celsius (in the range 0x954d to 0x7fff, i.e. -273.15°C to 327.67 ºC)
@@ -185,7 +187,15 @@ tz.thermostat_relay_status_log
 Get relay status log response
 tz.thermostat_relay_status_log_rsp
 -->
+<!-- Notes END: Do not edit below this line -->
 
+
+## Options
+*[How to use device type specific configuration](../guide/configuration/devices-groups.md#specific-device-options)*
+
+* `thermostat_unit`: Controls the temperature unit of the themrostat (default celsius). The value must be one of `celsius`, `fahrenheit`
+
+* `legacy`: Set to false to disable the legacy integration (highly recommended), will change structure of the published payload (default true). The value must be `true` or `false`
 
 
 ## Exposes
@@ -203,6 +213,7 @@ This climate device supports the following features: `occupied_heating_setpoint`
 - `local_temperature`: Current temperature measured on the device (in °C). To read send a message to `zigbee2mqtt/FRIENDLY_NAME/get` with payload `{"local_temperature": ""}`.
 - `system_mode`: Mode of this device. To control publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/set` with payload `{"system_mode": VALUE}` where `VALUE` is one of: `off`, `auto`, `heat`. To read send a message to `zigbee2mqtt/FRIENDLY_NAME/get` with payload `{"system_mode": ""}`.
 - `running_state`: The current running state. Possible values are: `idle`, `heat`. To read send a message to `zigbee2mqtt/FRIENDLY_NAME/get` with payload `{"running_state": ""}`.
+- `local_temperature_calibration`: Offset to be used in the local_temperature. To control publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/set` with payload `{"local_temperature_calibration": VALUE}.`To read send a message to `zigbee2mqtt/FRIENDLY_NAME/get` with payload `{"local_temperature": ""}`.
 
 ### Linkquality (numeric)
 Link quality (signal strength).
@@ -210,55 +221,4 @@ Value can be found in the published state on the `linkquality` property.
 It's not possible to read (`/get`) or write (`/set`) this value.
 The minimal value is `0` and the maximum value is `255`.
 The unit of this value is `lqi`.
-
-## Manual Home Assistant configuration
-Although Home Assistant integration through [MQTT discovery](../integration/home_assistant) is preferred,
-manual integration is possible with the following configuration:
-
-
-{% raw %}
-```yaml
-sensor:
-  - platform: "mqtt"
-    state_topic: "zigbee2mqtt/<FRIENDLY_NAME>"
-    availability_topic: "zigbee2mqtt/bridge/state"
-    value_template: "{{ value_json.battery }}"
-    unit_of_measurement: "%"
-    device_class: "battery"
-    state_class: "measurement"
-
-climate:
-  - platform: "mqtt"
-    availability_topic: "zigbee2mqtt/bridge/state"
-    temperature_unit: "C"
-    temp_step: 1
-    min_temp: "7"
-    max_temp: "30"
-    current_temperature_topic: true
-    current_temperature_template: "{{ value_json.local_temperature }}"
-    mode_state_topic: true
-    mode_state_template: "{{ value_json.system_mode }}"
-    modes: 
-      - "off"
-      - "auto"
-      - "heat"
-    mode_command_topic: true
-    action_topic: true
-    action_template: "{% set values = {'idle':'off','heat':'heating','cool':'cooling','fan only':'fan'} %}{{ values[value_json.running_state] }}"
-    temperature_command_topic: "occupied_heating_setpoint"
-    temperature_state_template: "{{ value_json.occupied_heating_setpoint }}"
-    temperature_state_topic: true
-
-sensor:
-  - platform: "mqtt"
-    state_topic: "zigbee2mqtt/<FRIENDLY_NAME>"
-    availability_topic: "zigbee2mqtt/bridge/state"
-    value_template: "{{ value_json.linkquality }}"
-    unit_of_measurement: "lqi"
-    enabled_by_default: false
-    icon: "mdi:signal"
-    state_class: "measurement"
-```
-{% endraw %}
-
 
